@@ -1,0 +1,45 @@
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+import numpy as np
+import random
+intents={"greeting":{
+               "patterns":["Hi","Hello","Good Morning"],
+               "responses":["Hello!","Hi there!",'hey! how can i help']},
+              "goodbye":{
+                  "patterns":["Bye","Goodbye","See you"],
+                  "responses":["GoodBye","See you later!",'Takecare!']},
+              "thanks":{
+                  "patterns":["Thanks","Thank you","that was helpful"],
+                  "responses":["you are welcome!","Happy to help","Anytime!"]}}
+sentences=[]
+labels=[]
+label_names=list(intents.keys())
+for i ,tag in enumerate(label_names):
+        for pattern in intents[tag]["patterns"]:
+            sentences.append(pattern)
+            labels.append(i)     
+x=tf.constant(sentences)
+y=tf.constant(labels)
+vectorizer=layers.TextVectorization(max_tokens=100,output_sequence_length=100)
+vectorizer.adapt(sentences)
+    
+model=keras.Sequential([vectorizer,layers.Embedding(100,10),layers.GlobalAveragePooling1D(),layers.Dense(10,activation="relu"),layers.Dense(len(label_names),activation="softmax")])
+model.compile(loss="sparse_categorical_crossentropy",optimizer="adam",metrics=["accuracy"])
+model.fit(x,y,epochs=200,verbose=0)
+print("Training complete!!")
+    
+def chatbot():
+    print("ChatBot running(print quit to exit)")
+    while True:
+        user_input=input("You: ")
+        if user_input.lower()=="quit":
+            print("Bot: GOODBYE!")
+            return
+        input_tensor=tf.constant([user_input])
+        predictions=model.predict(input_tensor,verbose=0)
+        predicted_index=np.argmax(predictions)
+        tag=label_names[predicted_index]
+        response=random.choice(intents[tag]['responses'])
+        print("Bot: ",response)
+chatbot()
