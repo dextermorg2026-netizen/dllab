@@ -1,0 +1,31 @@
+SUM OF NUMBERS
+ a ,b=map(int,input("enter numbers: ").split());
+ print("Sum is:",a+b);
+
+PRIME NUMBER:
+n=int(input("enter number: "));
+if n==1:
+    print("neither prime nor composite");
+elif n<1:
+    print("enter positive number");
+else:
+   for i in range(2,n):
+        if n%i==0:
+            print("composite");
+            break;
+        else:
+            print("prime");
+
+PALINDROME 
+s=input("Enter string: ")
+if s==s[::-1]:
+    print("palindrome");
+else:
+    print("not palindrome");
+  
+FACTORIAL:
+n=int(input("enter number: "));
+fact=1;
+for i in range(2,n+1):
+    fact=fact*i;
+print("factorial:",fact)
